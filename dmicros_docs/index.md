@@ -2,17 +2,17 @@
 
 欢迎阅读！此份用户指南对应公开版人群分类可视化服务。
 
-API的地址是[api-sic.iamhd.top](https://api-sic.iamhd.top).
+API的地址是[dmicros-api.iamhd.top](https://dmicros-api.iamhd.top).
 
-文档修改自早期demo版，可能有错漏之处，请及时反馈或新建pull request进行修订。
+文档如有错漏之处，请及时反馈或新建pull request进行修订。
 
-**文档并未覆盖全部API用法，我们可以根据集成需求进行相应的增补。** 公开版APP是基于API开发的前后端分离应用，API功能应足以支持集成开发。
+**文档并未覆盖全部API用法，我们可以根据集成需求进行相应的增补。** 公开版APP是基于API开发的前后端分离应用，您可以参考相关功能，API功能应足以支持相关功能的集成开发。
 
 ## 前言
 
 Dmicros API是提供数据服务的工具API，为用户提供可用于可视化的数据和在线模型计算。
 
-API遵循RESTFul标准，使用[eve-0.9](https://github.com/pyeve/eve)软件包开发，本份指南中将只包括Dmicros独有的设置，其他未尽事项（如错误返回格式等）请您参考[pyeve文档](http://python-eve.org)。
+API遵循RESTFul标准，使用[eve-2.0.4+](https://github.com/pyeve/eve)软件包开发，本份指南中将只包括Dmicros独有的设置，其他未尽事项（如错误返回格式等）请您参考[pyeve文档](http://python-eve.org)。
 
 如果您有任何问题或遇到bug，都可以在本项目中进行反馈。为了保证通用性，以下均使用`curl`命令来示例请求。但出于测试方便，推荐您使用[httpie](https://httpie.org)或[postman](https://www.getpostman.com).
 
@@ -20,17 +20,12 @@ API遵循RESTFul标准，使用[eve-0.9](https://github.com/pyeve/eve)软件包�
 
 ## 重要提示
 
-* **API正在进行大版本迭代，因此对于API设计不尽合理的地方，我们尚不能及时修订和部署**
 * **数据交换默认使用json格式，如果使用其他的方式传递参数可能会引发没有被单元测试覆盖的错误。请保持json格式的输入**
 * **本份文档保密，出于安全考虑请勿外发**
 
 ## 获取API令牌（token）
 
-API令牌:
-
-```shell
-<主令牌另行发送>
-```
+API令牌:(另行发送）
 
 API的每项服务都需要使用令牌才能访问，每项服务均有自己的权限要求。
 
@@ -43,12 +38,12 @@ API的每项服务都需要使用令牌才能访问，每项服务均有自己�
 
 **HTTP Request:**
 
-`GET https://api-sic.iamhd.top`
+`GET https://dmicros-api.iamhd.top`
 
 **示例**
 
 ```shell
-curl https://api-sic.iamhd.top  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top  -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -89,6 +84,7 @@ curl https://api-sic.iamhd.top  -H "Authorization:<your access token>"
         "href": "quotas",
         "title": "quotas"
       }
+      ...
     ]
   }
 }
@@ -96,7 +92,7 @@ curl https://api-sic.iamhd.top  -H "Authorization:<your access token>"
 
 ## 2. vdatas API : 可视化数据
 
-本部分与集成无关，已省略，请暂时跳过本节。
+（略）
 
 该API返回可用于可视化的设置和数据，相应的数据可以应用到[Echarts](http://www.echartsjs.com)上进行可视化。
 
@@ -107,14 +103,16 @@ curl https://api-sic.iamhd.top  -H "Authorization:<your access token>"
 * **创建`clusteds`**
 * **创建`clustedProjects`**
 
+以上两项资源将在接入样本数据和完成模型计算后消耗配额。
+
 **HTTP Request:**
 
-`GET https://api-sic.iamhd.top/quotas`
+`GET https://dmicros-api.iamhd.top/quotas`
 
 **示例**
 
 ```shell
-curl https://api-sic.iamhd.top/quotas  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top/quotas  -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -186,7 +184,7 @@ curl https://api-sic.iamhd.top/quotas  -H "Authorization:<your access token>"
 `raw`的拼装：
 
 * 和手动处理的数据一致，`raw`由48个字段值以半角逗号隔开拼装，如果某个值为空用`''`即可（见示例）。前两位起标识作用
-* 虽然md5 hash理论上不保证输入的唯一性，但由于`raw`的实际样本空间不大，目前仍可利用它简易避免重复输入
+* 虽然sha512 hash理论上不保证输入的唯一性，但由于`raw`的实际样本空间不大，目前仍可利用它避免重复输入
 
 该API也支持批量创建，输入格式为json array：
 
@@ -202,25 +200,39 @@ curl https://api-sic.iamhd.top/quotas  -H "Authorization:<your access token>"
 
 ---
 
-* `v`字段用于切换不同版本的模型，取值为1或2，类型为Int，1对应老版本模型（2012版），2对应新版本模型（2018版）
-* **当前版本请务必使用v=2**
-* v=3对应2022版模型，尚未在公版的当前版本实装
+* `v`字段用于切换不同版本的模型，取值为1或2，类型为Int，1、2对应老版本模型（2012版，2018版），3对应最新版本（2022版）
+* **当前版本请务必使用v=3**
 * 创建人群分类结果的同时可以传入更多的数据，并会自动添加`user`字段存储创建结果的用户名
 * `raw`被计算为`hashed`之后，API会要求`hashed`是**唯一的**，重复输入会导致API返回422错误。批量输入中出现重复，也会导致创建失败
-* 当前的hash算法使用md5，有极低的几率（1.47*10^-29）发生碰撞
+* 当前的hash算法使用sha512，发生碰撞的几率极低一般不需要考虑特殊情况的处理
+
+您还可以额外传入一个`shouldin`字段（整数列表），如果样本可以计算出人群分类结果，当人群分类结果不在shouldin中时API将忽略该条样本，当人群分类结果在shouldin中是API将正常保存该条样本。
+**该字段可以用于支持样本甄别功能，即判断样本是否属于希望的人群。**
+
+包含shouldin字段的输入：
+```json
+[
+    {
+    "raw": "1,RAV4,5,,6,7,14,1,7,3,5,7,5,6,5,6,6,5,5,3,4,6,6,5,2,6,4,5,6,5,6,5,5,7,7,6,2,7,6,5,5,7,5,7,5,6,6,3,6",
+    "shouldin": [4, 5, 6],
+    ...
+    },
+	...
+]
+```
 
 ---
 
 **HTTP Request:**
 
-`POST https://api-sic.iamhd.top/clusteds`
+`POST https://dmicros-api.iamhd.top/clusteds`
 
 **示例**
 
 *请注意传入的数据保持UTF-8编码，不要传输形如`\u30123`的数据。*
 
 ```shell
-curl -XPOST https://api-sic.iamhd.top/clusteds  -H "Authorization:<your access token>" -H "Content-Type:application/json" -d '{"raw":"654,英菲尼迪Q50L,4,3,6,6,1,2,5,7,35,0,1,2,4,5,4,6,5,6,6,4,5,5,5,5,6,6,5,6,6,5,6,5,5,5,5,5,4,4,5,5,6,5,5,6,4,5,5,5,6,6,5,5,5","v": 2}'
+curl -XPOST https://dmicros-api.iamhd.top/clusteds  -H "Authorization:<your access token>" -H "Content-Type:application/json" -d '{"raw":"654,英菲尼迪Q50L,4,3,6,6,1,2,5,7,35,0,1,2,4,5,4,6,5,6,6,4,5,5,5,5,6,6,5,6,6,5,6,5,5,5,5,5,4,4,5,5,6,5,5,6,4,5,5,5,6,6,5,5,5","v": 2}'
 ```
 
 **返回：**
@@ -251,29 +263,29 @@ curl -XPOST https://api-sic.iamhd.top/clusteds  -H "Authorization:<your access t
 该API支持通过`_id`和`hashed`码两种方式获取：
 
 * `_id`和包括_id的`href`在创建时的返回结果中
-* `hashed`码是输入`raw`的md5 hexdigest（不加盐），因此可以直接在客户端用同样的方法计算得出
+* `hashed`码是输入`raw`的sha512 hexdigest（不加盐），因此可以直接在客户端用同样的方法计算得出
 
 **HTTP Request:**
 
 用`hashed`码获取结果
 
-`GET https://api-sic.iamhd.top/clusteds/3e69a5afc5083b3553fa533d8c411bdf`
+`GET https://dmicros-api.iamhd.top/clusteds/ac548587527c16a20a6bcf41e3a956c6ce833a27c325628f530559a9c5368de16f77dcd866478228a20a40653db8dc12d37dd4f9653803dfaddb336dbc675b24`
 
 或
 
 用`_id`获取结果
 
-`GET https://api-sic.iamhd.top/clusteds/5a90f132c78ef35c4730d0df`
+`GET https://dmicros-api.iamhd.top/clusteds/5a90f132c78ef35c4730d0df`
 
 **示例**
 
 ```shell
-curl https://api-sic.iamhd.top/clusteds/3e69a5afc5083b3553fa533d8c411bdf  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top/clusteds/3e69a5afc5083b3553fa533d8c411bdf  -H "Authorization:<your access token>"
 ```
 
 或
 ```shell
-curl https://api-sic.iamhd.top/clusteds/5a90f132c78ef35c4730d0df  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top/clusteds/5a90f132c78ef35c4730d0df  -H "Authorization:<your access token>"
 ```
 
 
@@ -288,7 +300,7 @@ API会自动添加创建结果的用户和结果有效状态：` "user": "dmicro
   "_id": "5b16607ec78ef360a703b4f4",
   "raw": "1,RAV4,5,,6,7,14,1,7,3,5,7,5,6,5,6,6,5,5,3,4,6,6,5,2,6,4,5,6,5,6,5,5,7,7,6,2,7,6,5,5,7,5,7,5,6,6,3,6",
   "summary": "1,RAV4,6,3,3,1",
-  "hashed": "3e69a5afc5083b3553fa533d8c411bdf",
+  "hashed": "ac548587527c16a20a6bcf41e3a956c6ce833a27c325628f530559a9c5368de16f77dcd866478228a20a40653db8dc12d37dd4f9653803dfaddb336dbc675b23",
   "user": "dmicros",
   "is_valid": true,
   "_updated": "Tue, 05 Jun 2018 10:05:50 GMT",
@@ -349,14 +361,14 @@ API会自动添加创建结果的用户和结果有效状态：` "user": "dmicro
 
 通过`id`地址修改人群分类结果：
 
-`PATCH https://api-sic.iamhd.top/clustedsEdit/5b0ec4558690a90011ce2ebf`
+`PATCH https://dmicros-api.iamhd.top/clustedsEdit/5b0ec4558690a90011ce2ebf`
 
 **示例**
 
 获得人群分类结果记录中的`_id`和`_etag`
 
 ```shell
-curl https://api-sic.iamhd.top/clustedsEdit/3e69a5afc5083b3553fa533d8c411bdf -H Authorization:<your access token>
+curl https://dmicros-api.iamhd.top/clustedsEdit/3e69a5afc5083b3553fa533d8c411bdf -H Authorization:<your access token>
 ```
 
 得到
@@ -389,7 +401,7 @@ curl https://api-sic.iamhd.top/clustedsEdit/3e69a5afc5083b3553fa533d8c411bdf -H 
 获取`"_id": "5b0ec4558690a90011ce2ebf"`和`"_etag": "6381e22d2cc690589fdf3870b9025ecfb7c9b905"`然后进行实际的修改
 
 ```shell
-curl -g -XPATCH https://api-sic.iamhd.top/clustedsEdit/5b0ec4558690a90011ce2ebf -H Authorization:<your access token> -H If-Match:6381e22d2cc690589fdf3870b9025ecfb7c9b905 -H Content-Type:application/json -d '{"is_valid": 0}'
+curl -g -XPATCH https://dmicros-api.iamhd.top/clustedsEdit/5b0ec4558690a90011ce2ebf -H Authorization:<your access token> -H If-Match:6381e22d2cc690589fdf3870b9025ecfb7c9b905 -H Content-Type:application/json -d '{"is_valid": 0}'
 ```
 
 
@@ -522,20 +534,22 @@ Change Log:
 * `"extras": {"status": "testing"}` (可选，自定义) : 该项目有哪些其他属性，键和值均可自定义
 * `"clusteds"` **(必选)** : 该项目有哪些输入，格式和`clusteds`服务输入格式相同，创建一个项目至少要提供2个及以上的输入
 
+如同`clusteds`资源，您还可以额外传入一个`shouldin`字段，相当于在每条`clusteds`内嵌资源创建时都应用项目的`shouldin`值。并且在后续使用`append_clusteds`接口新增样本是也会自动应用。
+
 **HTTP Request:**
 
-`POST https://api-sic.iamhd.top/clustedProjects`
+`POST https://dmicros-api.iamhd.top/clustedProjects`
 
 **示例**
 
 ```shell
-curl -XPOST https://api-sic.iamhd.top/clustedProjects  -H "Authorization:<your access token>" -H "Content-Type:application/json" -d '{"name": "testing", "project_id": 61395, "description": "This is testing project", "extras": {"status": "testing"}, "clusteds": [...]}'
+curl -XPOST https://dmicros-api.iamhd.top/clustedProjects  -H "Authorization:<your access token>" -H "Content-Type:application/json" -d '{"name": "testing", "project_id": 61395, "description": "This is testing project", "extras": {"status": "testing"}, "clusteds": [...]}'
 ```
 
 考虑到输入内容较多，如果将输入储存在`cproject.json`文件中的话：
 
 ```shell
-curl -XPOST https://api-sic.iamhd.top/clustedProjects  -H "Authorization:<your access token>" -H "Content-Type:application/json" --data-binary "@cproject.json"
+curl -XPOST https://dmicros-api.iamhd.top/clustedProjects  -H "Authorization:<your access token>" -H "Content-Type:application/json" --data-binary "@cproject.json"
 ```
 
 **返回：**
@@ -563,12 +577,12 @@ curl -XPOST https://api-sic.iamhd.top/clustedProjects  -H "Authorization:<your a
 
 **HTTP Request:**
 
-`GET https://api-sic.iamhd.top/clustedProjects`
+`GET https://dmicros-api.iamhd.top/clustedProjects`
 
 **示例**
 
 ```shell
-curl https://api-sic.iamhd.top/clustedProjects  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top/clustedProjects  -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -627,12 +641,12 @@ curl https://api-sic.iamhd.top/clustedProjects  -H "Authorization:<your access t
 
 **HTTP Request:**
 
-`GET https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}`
+`GET https://dmicros-api.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}`
 
 **示例**
 
 ```shell
-curl -g 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}'  -H "Authorization:<your access token>"
+curl -g 'https://dmicros-api.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}'  -H "Authorization:<your access token>"
 ```
 
 Tips:由于参数中包括`{}`，可能需要在请求发出时对地址进行一定处理，如`-g`选项。
@@ -680,12 +694,12 @@ Tips:由于参数中包括`{}`，可能需要在请求发出时对地址进行�
 
 **HTTP Request:**
 
-`GET https://api-sic.iamhd.top/clustedProjects`
+`GET https://dmicros-api.iamhd.top/clustedProjects`
 
 **示例**
 
 ```shell
-curl https://api-sic.iamhd.top/clustedProjects/5a910541c78ef35c4730d0e5  -H "Authorization:<your access token>"
+curl https://dmicros-api.iamhd.top/clustedProjects/5a910541c78ef35c4730d0e5  -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -735,14 +749,14 @@ curl https://api-sic.iamhd.top/clustedProjects/5a910541c78ef35c4730d0e5  -H "Aut
 
 **HTTP Request:**
 
-`PATCH https://api-sic.iamhd.top/clustedProjects/reload-clusteds`
+`PATCH https://dmicros-api.iamhd.top/clustedProjects/reload-clusteds`
 
 **示例**
 
 我们要修改的内嵌文档`clustedProjects/5b173e2ac78ef360a703b4ff`，它包括`clusteds/5b173e2ac78ef360a703b501`。首先查看一下项目概要。
 
 ```shell
-curl 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>"
+curl 'https://dmicros-api.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -787,7 +801,7 @@ curl 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Au
 然后，将`clustedProjects/5b173e2ac78ef360a703b4ff`的一个内嵌文档的`clusted_project`修改为空。
 
 ```shell
-curl -XPATCH 'https://api-sic.iamhd.top/clusteds/edit/5b173e2ac78ef360a703b501' -H "Authorization:<your access token>" -H "If-Match:c6f710e0de2373e936e82cb4222feb929fc2bfa6" -H "Content-Type:application/json" -d '{"clusted_project":null}'
+curl -XPATCH 'https://dmicros-api.iamhd.top/clusteds/edit/5b173e2ac78ef360a703b501' -H "Authorization:<your access token>" -H "If-Match:c6f710e0de2373e936e82cb4222feb929fc2bfa6" -H "Content-Type:application/json" -d '{"clusted_project":null}'
 ```
 
 **返回：**
@@ -813,7 +827,7 @@ curl -XPATCH 'https://api-sic.iamhd.top/clusteds/edit/5b173e2ac78ef360a703b501' 
 *注意：虽然该API不能修改其他字段，也需要传递一个空数据。*
 
 ```shell
-curl -XPATCH 'https://api-sic.iamhd.top/clustedProjects/reload-clusteds/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>" -H "If-Match:b29cdc43e32406170eb929f3cc5174b906dd6e89" -H "Content-Type:application/json" -d '{}'
+curl -XPATCH 'https://dmicros-api.iamhd.top/clustedProjects/reload-clusteds/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>" -H "If-Match:b29cdc43e32406170eb929f3cc5174b906dd6e89" -H "Content-Type:application/json" -d '{}'
 ```
 
 **返回：**
@@ -837,7 +851,7 @@ curl -XPATCH 'https://api-sic.iamhd.top/clustedProjects/reload-clusteds/5b173e2a
 再查看`clustedProjects/5b173e2ac78ef360a703b4ff`，发现已不再包括`clusteds/5b173e2ac78ef360a703b501`。
 
 ```shell
-curl 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>"
+curl 'https://dmicros-api.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>"
 ```
 
 **返回：**
@@ -886,14 +900,14 @@ curl 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff' -H "Au
 
 **HTTP Request:**
 
-`PATCH https://api-sic.iamhd.top/clustedProjects/append-clusteds`
+`PATCH https://dmicros-api.iamhd.top/clustedProjects/append-clusteds`
 
 **示例**
 
 `PATCH`的参数是`{"clusteds": [<新的cluteds输入>, ...]}`
 
 ```shell
-curl -XPATCH 'https://api-sic.iamhd.top/clustedProjects/append-clusteds/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>" -H "If-Match:b6385003e0c4143b4a3533c12086e83f64cbdf1f" -H "Content-Type:application/json" -d '{"clusteds":[...]}'
+curl -XPATCH 'https://dmicros-api.iamhd.top/clustedProjects/append-clusteds/5b173e2ac78ef360a703b4ff' -H "Authorization:<your access token>" -H "If-Match:b6385003e0c4143b4a3533c12086e83f64cbdf1f" -H "Content-Type:application/json" -d '{"clusteds":[...]}'
 ```
 
 **返回：**
@@ -917,7 +931,7 @@ curl -XPATCH 'https://api-sic.iamhd.top/clustedProjects/append-clusteds/5b173e2a
 查看新增后的`clustedProjects`：
 
 ```shell
-curl -g 'https://api-sic.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}' -H "Authorization:<your access token>"
+curl -g 'https://dmicros-api.iamhd.top/clustedProjects/5b173e2ac78ef360a703b4ff?embedded={"clusteds":1}' -H "Authorization:<your access token>"
 ```
 
 ```json

@@ -16,7 +16,7 @@ mongodb不是关系数据库，这两个API提供一种双向引用关系维护�
 
 但由于支持批量插入内嵌资源，这些API实际用起来调用频次会比较低
 
-* `POST https://dmicros.iamhd.top/clustedProjects`API支持在创建project的同时批量创建内嵌的资源
+* `POST https://dmicros-api.iamhd.top/clustedProjects`API支持在创建project的同时批量创建内嵌的资源
 * `PATCH clustedProjects/append-clusteds`API支持同步批量新增内嵌资源（如项目下样本很多则不推荐）
 * `PATCH clustedProjects/reload-clusteds`主要负责应对关系挂错时做修改
 
