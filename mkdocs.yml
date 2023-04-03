@@ -1,0 +1,20 @@
+site_name: Dmicros文档
+docs_dir: 'dmicros_docs'
+site_dir: 'docs'
+
+pages:
+- 用户指南: 'index.md'
+- 项目计划: 'plan.md'
+- FAQ: 'faq.md'
+
+markdown_extensions:
+- plantuml
+
+theme:
+  name: 'material'
+  logo:
+    icon: 'flight_takeoff'
+  language: 'zh'
+  extra:
+    seach:
+      language: 'en zh'
