@@ -4,7 +4,6 @@ site_dir: 'docs'
 
 pages:
 - 用户指南: 'index.md'
-- 项目计划: 'plan.md'
 - FAQ: 'faq.md'
 
 markdown_extensions:
