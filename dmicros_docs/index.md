@@ -1,6 +1,6 @@
-# 用户指南-(Dmicros-v0.9.0beta)
+# 用户指南-(Dmicros-v1.1.0ForGeely)
 
-欢迎阅读！此份用户指南对应公开版人群分类可视化服务。
+欢迎阅读！用户指南对应支持吉利定制版模型的人群分类可视化服务。
 
 API的地址是[dmicros-api.iamhd.top](https://dmicros-api.iamhd.top).
 
@@ -92,7 +92,7 @@ curl https://dmicros-api.iamhd.top  -H "Authorization:<your access token>"
 
 ## 2. vdatas API : 可视化数据
 
-（略）
+（略，当前版本指南重点介绍模型计算）
 
 该API返回可用于可视化的设置和数据，相应的数据可以应用到[Echarts](http://www.echartsjs.com)上进行可视化。
 
